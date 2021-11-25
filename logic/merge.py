@@ -1,7 +1,9 @@
 from pikepdf import Pdf
 from glob import glob
-import re
 from pathlib import Path
+
+import logic.util as util
+import logic.constants as co
 
 
 def merge_and_save_pdf(source_folder: Path, merged_pdf_name: str = "merged.pdf", overwrite: bool = False):
@@ -15,22 +17,7 @@ def merge_and_save_pdf(source_folder: Path, merged_pdf_name: str = "merged.pdf",
             merged_pdf_name = merged_pdf_name + '.pdf'
         save_path = source_folder / merged_pdf_name
         if not overwrite:
-            save_path = check_and_return_unique_name(source_folder / merged_pdf_name)
+            save_path = util.check_and_return_unique_name(save_path)
         merged_pdf.save(save_path)
     else:
-        pass
-
-
-def check_and_return_unique_name(file_path: Path) -> Path:
-    """Check that file_path does not already exist. If it does, add index to the end of file name."""
-    if file_path.exists():
-        file_name = file_path.name
-        if not (match := re.search(r"_(\d{1,2})\.", file_name)):
-            file_name = re.sub(r"(?=\..{3,4}$)", "_1", file_name)
-        else:
-            num = int(match[1])
-            file_name = re.sub(r"_%s\." % str(num), "_%s." % str(num+1), file_name)
-        new_path = check_and_return_unique_name(file_path.parent.resolve() / file_name)
-        return new_path
-    else:
-        return file_path
+        raise co.FolderNotFound(f"The requested folder {source_folder.name} is not found.")
