@@ -17,4 +17,4 @@ def split_and_save_pdf(source_path: Path) -> None:
             dst.pages.append(page)
             dst.save(dest_folder / f"{file_name}_page_{i+1}.pdf")
     else:
-        raise FileNotFoundError(f"The requested file {source_path.name} does not exist")
+        raise FileNotFoundError(f"The requested file {source_path.name} does not exist.")
