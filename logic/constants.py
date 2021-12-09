@@ -1,5 +1,16 @@
 from typing import List
 
+source_path = "source_path"
+source_folder = "source_folder"
+overwrite = "overwrite"
+merged_pdf_name = "merged_pdf_name"
+pages = "required_pages"
+owner_pass = "owner_password"
+user_pass = "user_password"
+
+provide_path_message = "Please provide path to the pdf file."
+incorrect_body_message = "The body to the request is entered incorrectly: missing {} key."
+
 
 class IncorrectInputFormat(Exception):
     pass

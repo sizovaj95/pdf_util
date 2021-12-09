@@ -4,7 +4,7 @@ from pathlib import Path
 import logic.util as util
 
 
-def extract_and_save_pages(source_path: Path, required_pages: str, overwrite: bool = False):
+def extract_and_save_pages(source_path: Path, required_pages: str, overwrite: bool = False) -> Path:
     """Extract required pages from document and save them in the same folder.
     required_pages must be listed either separated by commas (,) or as ranges (2-4)."""
     if source_path.exists():
@@ -24,5 +24,6 @@ def extract_and_save_pages(source_path: Path, required_pages: str, overwrite: bo
             save_path = util.check_and_return_unique_name(save_path)
 
         extracted_pdf.save(save_path)
+        return save_path
     else:
         raise FileNotFoundError(F"The requested file {source_path.name} does not exist.")

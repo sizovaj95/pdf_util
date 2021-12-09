@@ -6,7 +6,7 @@ import logic.util as util
 import logic.constants as co
 
 
-def merge_and_save_pdf(source_folder: Path, merged_pdf_name: str = "merged.pdf", overwrite: bool = False):
+def merge_and_save_pdf(source_folder: Path, merged_pdf_name: str = "merged.pdf", overwrite: bool = False) -> Path:
     """Merge all pdfs from provided folder into single pdf and save in the same folder."""
     if source_folder.exists():
         merged_pdf = Pdf.new()
@@ -19,5 +19,6 @@ def merge_and_save_pdf(source_folder: Path, merged_pdf_name: str = "merged.pdf",
         if not overwrite:
             save_path = util.check_and_return_unique_name(save_path)
         merged_pdf.save(save_path)
+        return save_path
     else:
         raise co.FolderNotFound(f"The requested folder {source_folder.name} is not found.")
