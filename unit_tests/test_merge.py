@@ -10,13 +10,18 @@ class TestMergePDF(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.data_dir = Path(__file__).parent.parent.resolve() / 'data'
+        cls.temp_dir = tempfile.TemporaryDirectory(prefix="unit_test_")
+        cls.destination_dir = Path(cls.temp_dir.name)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.temp_dir.cleanup()
 
     def test_merge_1(self):
         test_folder = self.data_dir / "test_to_merge"
         expected_file_name = "hobbit_merged.pdf"
-        with tempfile.TemporaryDirectory() as temp_dir:
-            mr.merge_and_save_pdf(test_folder, expected_file_name, destination_folder=Path(temp_dir))
-            self.assertTrue((Path(temp_dir) / expected_file_name).exists())
+        mr.merge_and_save_pdf(test_folder, expected_file_name, destination_folder=self.destination_dir)
+        self.assertTrue((self.destination_dir / expected_file_name).exists())
 
     def test_merge_directory_not_found(self):
         test_folder = self.data_dir / "non_existing_folder"
