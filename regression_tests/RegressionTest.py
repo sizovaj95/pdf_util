@@ -36,7 +36,7 @@ class RegressionTests:
         print(f"RUNNING TESTS FOR {endpoint_name.upper()}.")
         for file in list(os.scandir(request_folder)):
             print(f"=====Test for {file.name}=====")
-            with tempfile.TemporaryDirectory() as temp_dir:
+            with tempfile.TemporaryDirectory(prefix="reg_test_") as temp_dir:
                 print(f"Creating temporary dir {temp_dir}")
                 payload = get_payload(endpoint_name)
                 payload[co.source_path] = file.path
