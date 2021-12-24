@@ -1,6 +1,6 @@
 from unittest import TestCase
 from pathlib import Path
-import os
+import tempfile
 
 import logic.merge as mr
 import logic.constants as co
@@ -14,10 +14,9 @@ class TestMergePDF(TestCase):
     def test_merge_1(self):
         test_folder = self.data_dir / "test_to_merge"
         expected_file_name = "hobbit_merged.pdf"
-        if Path(test_folder / expected_file_name).exists():
-            os.remove(Path(test_folder / expected_file_name))
-        mr.merge_and_save_pdf(test_folder, expected_file_name)
-        self.assertTrue(Path(test_folder / expected_file_name).exists())
+        with tempfile.TemporaryDirectory() as temp_dir:
+            mr.merge_and_save_pdf(test_folder, expected_file_name, destination_folder=Path(temp_dir))
+            self.assertTrue((Path(temp_dir) / expected_file_name).exists())
 
     def test_merge_directory_not_found(self):
         test_folder = self.data_dir / "non_existing_folder"

@@ -13,14 +13,18 @@ app = Flask(__name__)
 @app.route('/split', methods=["POST"])
 def split():
     """Split a pdf into separate pages. Requires path to the file."""
+    kwargs = {}
     try:
         source_path = Path(request.form[co.source_path])
+        kwargs[co.source_path] = source_path
     except KeyError as er:
         return co.incorrect_body_message.format(er.args[0])
     if not source_path:
         return co.provide_path_message
+    if co.destination in request.form:
+        kwargs[co.destination] = Path(request.form[co.destination])
     try:
-        save_path = sp.split_and_save_pdf(source_path)
+        save_path = sp.split_and_save_pdf(**kwargs)
         return f"Split {source_path.name} and saved in {save_path}."
     except FileNotFoundError as er:
         return er.args[0]
@@ -33,13 +37,15 @@ def merge():
     kwargs = {}
     try:
         source_path = Path(request.form[co.source_path])
-        kwargs[co.source_folder] = source_path
+        kwargs[co.source_path] = source_path
     except KeyError:
         return co.incorrect_body_message.format(co.source_path)
     if co.merged_pdf_name in request.form:
         kwargs[co.merged_pdf_name] = request.form[co.merged_pdf_name]
     if co.overwrite in request.form:
         kwargs[co.overwrite] = bool(request.form[co.overwrite])
+    if co.destination in request.form:
+        kwargs[co.destination] = Path(request.form[co.destination])
 
     try:
         save_path = mg.merge_and_save_pdf(**kwargs)
@@ -62,6 +68,8 @@ def extract():
         return co.incorrect_body_message.format(er.args[0])
     if co.overwrite in request.form:
         kwargs[co.overwrite] = bool(request.form[co.overwrite])
+    if co.destination in request.form:
+        kwargs[co.destination] = Path(request.form[co.destination])
     try:
         save_path = ex.extract_and_save_pages(**kwargs)
         return f"Extracted pages {pages} and saved into {save_path}."
@@ -86,6 +94,8 @@ def save_securely():
         kwargs[co.user_pass] = request.form[co.user_pass]
     if co.overwrite in request.form:
         kwargs[co.overwrite] = bool(request.form[co.overwrite])
+    if co.destination in request.form:
+        kwargs[co.destination] = Path(request.form[co.destination])
     try:
         save_path = sec.save_pdf_securely(**kwargs)
         return f"Password-protected and saved into {save_path}."
