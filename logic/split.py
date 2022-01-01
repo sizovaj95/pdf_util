@@ -3,6 +3,7 @@ import os
 import re
 from pathlib import Path
 from typing import Optional
+import logging
 
 
 def split_and_save_pdf(source_path: Path, destination_folder: Optional[Path] = None) -> Optional[Path]:
@@ -13,6 +14,7 @@ def split_and_save_pdf(source_path: Path, destination_folder: Optional[Path] = N
         file_name = re.search(r"(.*)\.pdf", source_path.name, re.I)[1]
         dest_folder = destination_folder / f"{file_name}_split"
         if not dest_folder.exists():
+            logging.info(f"Creating destination folder: {dest_folder}")
             os.mkdir(dest_folder)
         pdf = pikepdf.Pdf.open(source_path)
         for i, page in enumerate(pdf.pages):
@@ -21,4 +23,6 @@ def split_and_save_pdf(source_path: Path, destination_folder: Optional[Path] = N
             dst.save(dest_folder / f"{file_name}_page_{i+1}.pdf")
         return dest_folder
     else:
-        raise FileNotFoundError(f"The requested file {source_path.name} does not exist.")
+        message = f"The requested file {source_path.name} does not exist."
+        logging.error(message)
+        raise FileNotFoundError(message)
